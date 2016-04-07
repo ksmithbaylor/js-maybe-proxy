@@ -1,6 +1,7 @@
 const test = require('tape');
+const Maybe = require('.');
 
-test('it works', t => {
-  t.pass();
+test('Maybe returns an object', t => {
+  t.assert(typeof Maybe(42) === 'object');
   t.end();
-});
+})
