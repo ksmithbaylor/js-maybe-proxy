@@ -1,28 +1,36 @@
 const test = require('tape');
 const Maybe = require('.');
 
-test('Maybe returns an object', t => {
+test('returns an object', t => {
   t.equal(typeof Maybe(42), 'object');
   t.end();
 });
 
-test('Maybe lets me get the value', t => {
-  t.equal(Maybe(42).fromMaybe, 42);
+test('obeys the right identity monad law', t => {
+  const testId = x => t.equal(Maybe(x).fromMaybe, x);
+
+  [
+    42, -42, 0,                 // numbers
+    'hello', '',                // strings
+    true, false,                // booleans
+    undefined,                  // undefined
+    null, {}, [],               // objects
+    Symbol(), Symbol('hello')   // symbols
+  ].forEach(testId);
   t.end();
 });
 
-test('Maybe lets me call and_then', t => {
-  t.equal(Maybe(42).and_then(x => Maybe(x + 1)).fromMaybe, 43);
+test('Maybe lets me access and call valid properties', t => {
+  const obj = { num: 1 };
+
+  t.equal(Maybe(obj).num.fromMaybe, obj.num);
   t.end();
 });
 
-test('Maybe lets me omit the and_then call', t => {
-  const obj = {
-    num: 1,
-    inc() { return this.num + 1 }
-  };
-  const m = Maybe(obj);
+test('Maybe hides invalid property accesses', t => {
+  const obj = {};
 
-  t.equal(Maybe(obj).inc().fromMaybe, 2);
+  t.equal(Maybe(obj).nothing.here.to.see.fromMaybe, null);
+  t.equal(Maybe(obj).nothing().here().to().see().fromMaybe, null);
   t.end();
-})
+});
