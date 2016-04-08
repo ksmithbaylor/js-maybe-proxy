@@ -20,17 +20,23 @@ test('obeys the right identity monad law', t => {
   t.end();
 });
 
-test('Maybe lets me access and call valid properties', t => {
+test('passes through valid property accesses', t => {
   const obj = { num: 1 };
 
   t.equal(Maybe(obj).num.fromMaybe, obj.num);
   t.end();
 });
 
-test('Maybe hides invalid property accesses', t => {
+test('masks invalid property accesses', t => {
   const obj = {};
 
   t.equal(Maybe(obj).nothing.here.to.see.fromMaybe, null);
-  t.equal(Maybe(obj).nothing().here().to().see().fromMaybe, null);
   t.end();
+});
+
+test('masks function calls on invalid properies', t => {
+  const obj = {};
+
+  t.equal(Maybe(obj).nothing().here().to().see().fromMaybe, null);
+  t.end()
 });
