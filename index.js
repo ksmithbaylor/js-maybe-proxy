@@ -1,15 +1,3 @@
-//const Target = Object.create(null);
-//Object.assign(Target, {
-  //and_then(f) {
-    //console.log("AND_THEN");
-    //if (this.value !== null && this.value !== undefined) {
-      //return f(this.value);
-    //}
-
-    //return Maybe(this.value);
-  //}
-//});
-
 function hasProperties(thing) {
   return thing !== null && typeof thing !== 'undefined';
 }
