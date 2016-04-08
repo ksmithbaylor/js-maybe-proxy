@@ -9,20 +9,42 @@ Object.assign(Target, {
   }
 });
 
+
+// Maybe(obj) -> must be a Maybe
+// m.inc -> must be (...args) => Maybe(target.value.inc(args))
+// m.foo -> must be Maybe(target.value.foo)
+
+//function method_missing(target, name, ...args) {
+  //if (name in target.value) {
+    //const prop = Reflect.get(target.value, name);
+    //if (typeof prop === 'function') {
+      //return Maybe(prop.apply(target.value, args));
+    //}
+    //return Maybe(prop)
+  //}
+  //return Maybe(target.value);
+//}
+
 function Maybe(value) {
   const target = Object.create(Target);
   Object.assign(target, {
     value,
-    get fromMaybe() { return value; }
+    get fromMaybe() { return this.value; }
   });
 
   return new Proxy(target, {
     get(target, name) {
       if (name in target) {
-        return Reflect.get(target, name);
+        return Reflect.get(target, name, target);
       }
 
-      return null;
+      if (name in target.value) {
+        if (typeof target.value[name] === 'function') {
+          return (...args) => Maybe(target.value[name](...args));
+        }
+        return Maybe(target.value[name]);
+      }
+      return Maybe(null);
     }
   });
 }
