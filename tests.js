@@ -15,6 +15,7 @@ test('obeys the right identity monad law', t => {
     true, false,                // booleans
     undefined,                  // undefined
     null, {}, [],               // objects
+    () => {}, function() {},    // functions
     Symbol(), Symbol('hello')   // symbols
   ].forEach(testId);
   t.end();
