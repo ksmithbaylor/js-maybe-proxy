@@ -35,9 +35,31 @@ test('masks invalid property accesses', t => {
   t.end();
 });
 
+//test('passes through function calls on valid properies', t => {
+  //const obj = {
+    //foo: 56,
+    //f() { return this.foo; }
+  //};
+
+  //t.equal(Maybe(obj).f().fromMaybe, obj.f());
+  //t.end()
+//});
+
 test('masks function calls on invalid properies', t => {
   const obj = {};
 
   t.equal(Maybe(obj).nothing().here().to().see().fromMaybe, null);
   t.end()
+});
+
+test('passes through valid function calls', t => {
+  const f = function (a, b, c) { return a + b + c; };
+
+  t.equal(Maybe(f)(1, 2, 3).fromMaybe, f(1, 2, 3));
+  t.end();
+});
+
+test('masks invalid function calls', t => {
+  t.equal(Maybe(null)().fromMaybe, null);
+  t.end();
 });

@@ -1,7 +1,3 @@
-function hasProperties(thing) {
-  return thing !== null && typeof thing !== 'undefined';
-}
-
 function Maybe(value) {
   const target = {
     value
@@ -9,28 +5,29 @@ function Maybe(value) {
 
   return new Proxy(target, {
     get(target, name) {
+      if (typeof name === 'symbol') {
+        return target[name];
+      }
+
       if (name === 'fromMaybe') {
         return target.value;
       }
 
-      if (typeof name === 'symbol') {
-        return Maybe(target[name]);
+      if (target.value === null) {
+        return Maybe(null);
       }
 
-      const val = target.value;
-
-      if (hasProperties(val) && Reflect.has(val, name)) {
-        return Maybe(Reflect.get(val, name, val));
+      if (target.value[name]) {
+        return Maybe(target.value[name]);
       }
 
       return Maybe(null);
     },
 
     apply(target, thisArg, args) {
-      const val = target.value;
-
-      if (typeof val === 'function') {
-        return Maybe(Reflect.apply(val, thisArg, args));
+      if (typeof target.value === 'function') {
+        const result = Reflect.apply(target.value, thisArg, args);
+        return Maybe(result);
       }
 
       return Maybe(null);
