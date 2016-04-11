@@ -1,15 +1,13 @@
 function Maybe(value) {
-  const target = {
-    value
-  };
+  const target = { value, __isMaybe: true };
 
   return new Proxy(target, {
     get(target, name) {
       if (typeof name === 'symbol') {
-        return target[name];
+        return target.value[name];
       }
 
-      if (name === 'fromMaybe') {
+      if (name === 'value') {
         return target.value;
       }
 
@@ -26,8 +24,13 @@ function Maybe(value) {
 
     apply(target, thisArg, args) {
       if (typeof target.value === 'function') {
-        const result = Reflect.apply(target.value, thisArg, args);
-        return Maybe(result);
+        try {
+          if (thisArg.__isMaybe) {
+            return Maybe(Reflect.apply(target.value, thisArg.value, args));
+          }
+        } catch (e) {
+          return Maybe(Reflect.apply(target.value, thisArg, args));
+        }
       }
 
       return Maybe(null);
