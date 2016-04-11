@@ -1,3 +1,5 @@
+const Nothing = {};
+
 function Maybe(value) {
   const target = { value, __isMaybe: true };
 
@@ -8,18 +10,22 @@ function Maybe(value) {
       }
 
       if (name === 'value') {
+        if (target.value === Nothing) {
+          return null;
+        }
+
         return target.value;
       }
 
-      if (target.value === null) {
-        return Maybe(null);
+      if (target.value === Nothing) {
+        return Maybe(Nothing);
       }
 
       if (target.value[name]) {
         return Maybe(target.value[name]);
       }
 
-      return Maybe(null);
+      return Maybe(Nothing);
     },
 
     apply(target, thisArg, args) {
@@ -33,7 +39,7 @@ function Maybe(value) {
         }
       }
 
-      return Maybe(null);
+      return Maybe(Nothing);
     }
   });
 }
