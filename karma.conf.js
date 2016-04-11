@@ -3,7 +3,8 @@ module.exports = function karmaConfig(config) {
     plugins: [
       require('karma-tap'),
       require('karma-chrome-launcher'),
-      require('karma-webpack')
+      require('karma-webpack'),
+      require('karma-sourcemap-loader')
     ],
 
     basePath: '',
@@ -13,13 +14,14 @@ module.exports = function karmaConfig(config) {
     ],
 
     preprocessors: {
-      'tests.js': ['webpack']
+      'tests.js': ['webpack', 'sourcemap']
     },
 
     webpack: {
       node: {
         fs: 'empty'
-      }
+      },
+      devtool: 'inline-source-map'
     },
 
     reporters: ['dots'],
